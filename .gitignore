@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.DS_Store
+coverage
+manual-smoke.sh
+manual-smoke.ps1
+
+debug_*.ts
+test_output.txt
