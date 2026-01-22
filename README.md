@@ -279,4 +279,4 @@ Want to contribute or run locally?
 
 ## License
 
-MIT © Akin Ibitoye
+MIT © Akin 
