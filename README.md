@@ -104,4 +104,4 @@ cron-human "*/15 * * * *" --json --quiet
 
 ## License
 
-MIT © Akin Ibitoye
+MIT © Akin
