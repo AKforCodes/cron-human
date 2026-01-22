@@ -253,7 +253,7 @@ Want to contribute or run locally?
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/cron-human.git
+   git clone https://github.com/AKforCodes/cron-human.git
    cd cron-human
    ```
 

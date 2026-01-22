@@ -5,7 +5,7 @@
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
   "bin": {
-    "cron-human": "./dist/cli.js"
+    "cron-human": "dist/cli.js"
   },
   "type": "module",
   "scripts": {
@@ -25,6 +25,14 @@
   ],
   "author": "Akin Ibitoye",
   "license": "MIT",
+  "homepage": "https://github.com/AKforCodes/cron-human#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AKforCodes/cron-human.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AKforCodes/cron-human/issues"
+  },
   "files": [
     "dist",
     "README.md",
