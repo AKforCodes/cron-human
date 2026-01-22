@@ -31,7 +31,7 @@ cron-human "0 12 * * MON-FRI"
 ### Options
 
 | Option | Alias | Description | Default |
-|Params|---|---|---|
+|---|---|---|---|
 | `--next <number>` | `-n` | Number of upcoming run times to show | 5 |
 | `--tz <iana>` | | Timezone for output dates | System Local |
 | `--json` | | Output JSON format | false |
