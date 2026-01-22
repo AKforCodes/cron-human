@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { createRequire } from 'module';
 import { DateTime } from 'luxon';
 import { explainCron, getNextRuns, validateCron } from './lib.js';
-
-const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
+import { handleErr } from "./utils/error.js"
+import pkg from "../package.json" with {type: "json"}
 
 const program = new Command();
 
@@ -21,26 +19,26 @@ program
   .option('--seconds', 'support 6-field cron expressions with seconds', false)
   .action((expression, options) => {
     if (options.tz) {
-        const test = DateTime.now().setZone(options.tz);
-        if (!test.isValid) {
-            console.error(`Error: invalid timezone "${options.tz}" (use IANA like "Europe/London")`);
-            process.exit(1);
-        }
+      const test = DateTime.now().setZone(options.tz);
+      if (!test.isValid) {
+        console.error(`Error: invalid timezone "${options.tz}" (use IANA like "Europe/London")`);
+        process.exit(1);
+      }
     }
 
     let nextCount = 5;
     if (options.next) {
-        const count = parseInt(options.next, 10);
-        if (!Number.isFinite(count) || count < 1 || count > 100) {
-            console.error("Error: --next must be a number between 1 and 100");
-            process.exit(1);
-        }
-        nextCount = count;
+      const count = parseInt(options.next, 10);
+      if (!Number.isFinite(count) || count < 1 || count > 100) {
+        console.error("Error: --next must be a number between 1 and 100");
+        process.exit(1);
+      }
+      nextCount = count;
     }
 
     const error = validateCron(expression, {
-        timezone: options.tz,
-        allowSeconds: options.seconds
+      timezone: options.tz,
+      allowSeconds: options.seconds
     });
 
     if (error) {
@@ -51,10 +49,11 @@ program
     try {
       let description = '';
       try {
-          description = explainCron(expression);
-      } catch(e: any) {
-           console.error(`Error: Could not generate description. ${e?.message ?? e}`);
-           process.exit(1);
+        description = explainCron(expression);
+      } catch (e: unknown) {
+        const err = handleErr(e)
+        console.error(`Error: Could not generate description. ${err.message}`);
+        process.exit(1);
       }
 
       const output: any = {
@@ -75,8 +74,9 @@ program
           output.nextRuns.forEach((run: string) => console.log(`- ${run}`));
         }
       }
-    } catch (err: any) {
-      console.error(`Error: ${err.message}`);
+    } catch (e: unknown) {
+      const err = handleErr(e);
+      console.error(err)
       process.exit(1);
     }
   });

@@ -4,13 +4,13 @@
   "description": "A CLI that converts cron expressions to human-readable English and prints next run times",
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
+  "type": "module",
   "bin": {
     "cron-human": "dist/cli.js"
   },
-  "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/cli.js",
+    "start": "node dist/cli.js '*/5 * * * *'",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",
