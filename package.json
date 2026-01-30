@@ -1,6 +1,6 @@
 {
   "name": "cron-human",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A CLI that converts cron expressions to human-readable English and prints next run times",
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
