@@ -104,4 +104,57 @@ cron-human "*/15 * * * *" --json --quiet
 
 ## License
 
-MIT © Akin
+MIT © Akin Ibitoye
+
+## Interactive Mode (TUI)
+
+Launch the interactive Terminal UI with:
+
+```bash
+cron-human tui
+# or
+cron-human --interactive
+```
+
+![Cron Human TUI Screenshot](tui-screenshot.png)
+
+### Key Features
+- **Live Preview**: Real-time validation and English translation as you type.
+- **History**: Auto-saves successful cron expressions. Navigate history with `Up/Down` and reload with `Enter`.
+- **Clipboard Integration**: Paste (`Ctrl+V`) directly into the editor. Copy (`c`) saved expressions from history.
+- **Toggle Options**: Quickly enable/disable seconds support (`Space`).
+
+### Keybindings
+
+| Key | Action |
+|---|---|
+| `Tab` | Cycle focus (Input → Options → History) |
+| `Ctrl+V` | Paste from clipboard |
+| `Ctrl+R` | Reset/Clear input |
+| `Ctrl+C` / `Q` | Quit |
+
+**History Panel:**
+| Key | Action |
+|---|---|
+| `Up` / `Down` | Navigate history |
+| `Enter` | Load selected expression |
+| `c` | Copy selected expression |
+
+**Options Panel:**
+| Key | Action |
+|---|---|
+| `Space` | Toggle checkbox |
+
+## Manual Test Cases
+
+1. **Basic Minute**: `* * * * *` -> "Every minute"
+2. **Specific Time**: `30 14 * * *` -> "At 14:30"
+3. **Interval**: `*/5 * * * *` -> "Every 5 minutes"
+4. **Range**: `0 9-17 * * 1-5` -> "At 0 minutes past the hour, between 09:00 and 17:59, Monday through Friday"
+5. **Macro**: `@daily` -> "At 00:00"
+6. **With Seconds**: `*/30 * * * * *` (Enable "Allow Seconds") -> "Every 30 seconds"
+7. **Invalid**: `* * * 99 *` -> "Error: Invalid cron expression..."
+8. **Timezone**: Set TZ to `UTC` -> Verify next runs match UTC.
+9. **History**: Enter a valid cron -> Press Up -> should see it.
+10. **Help**: Press `Tab` until Focus is History, then `Tab` again -> Focus Input.
+11. **Clipboard**: Press `Ctrl+V` to paste a cron string. Select history item and press `c` to copy.

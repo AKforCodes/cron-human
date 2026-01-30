@@ -11,13 +11,25 @@ program
   .name('cron-human')
   .description('Converts cron expressions to human-readable English and prints next run times.')
   .version(pkg.version, '-v, --version')
-  .argument('<expression>', 'Cron expression to parse')
+  .argument('[expression]', 'Cron expression to parse')
   .option('-n, --next <number>', 'how many upcoming run times to print', '5')
   .option('--tz <timezone>', 'timezone for output (default: system timezone)')
   .option('--json', 'output machine-readable JSON', false)
   .option('-q, --quiet', 'only print the one-line human explanation (no next runs)', false)
   .option('--seconds', 'support 6-field cron expressions with seconds', false)
-  .action((expression, options) => {
+  .option('-i, --interactive', 'launch interactive TUI mode')
+  .action(async (expression, options) => {
+    if (options.interactive) {
+        const { startTui } = await import('./ui/launcher.js');
+        await startTui();
+        return;
+    }
+
+    if (!expression) {
+        program.help();
+        return;
+    }
+
     if (options.tz) {
       const test = DateTime.now().setZone(options.tz);
       if (!test.isValid) {
@@ -80,5 +92,13 @@ program
       process.exit(1);
     }
   });
+
+// Add explicit command as well
+program.command('tui')
+    .description('Launch the interactive TUI')
+    .action(async () => {
+        const { startTui } = await import('./ui/launcher.js');
+        await startTui();
+    });
 
 program.parse();

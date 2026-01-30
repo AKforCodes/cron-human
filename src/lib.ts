@@ -8,23 +8,22 @@ export interface ValidateOptions {
 }
 
 const MACROS: Record<string, string> = {
-  "@yearly":   "0 0 0 1 1 *",
-  "@annually": "0 0 0 1 1 *",
-  "@monthly":  "0 0 0 1 * *",
-  "@weekly":   "0 0 0 * * 0",
-  "@daily":    "0 0 0 * * *",
-  "@hourly":   "0 0 * * * *",
-  "@minutely": "0 * * * * *",
+  "@yearly":   "0 0 1 1 *",
+  "@annually": "0 0 1 1 *",
+  "@monthly":  "0 0 1 * *",
+  "@weekly":   "0 0 * * 0",
+  "@daily":    "0 0 * * *",
+  "@hourly":   "0 * * * *",
+  "@minutely": "* * * * *",
   "@secondly": "* * * * * *",
-  "@weekdays": "0 0 0 * * 1-5",
-  "@weekends": "0 0 0 * * 0,6",
+  "@weekdays": "0 0 * * 1-5",
+  "@weekends": "0 0 * * 0,6",
 };
 
 function normalizeForParse(expr: string): string {
   const t = expr.trim();
   if (!t.startsWith("@")) return t;
   const key = t.toLowerCase();
-  // for parsing, use expanded cron if known, otherwise keep original (will error)
   return MACROS[key] ?? t;
 }
 
@@ -60,14 +59,10 @@ export function validateCron(expression: string, options: ValidateOptions = {}):
   const normalized = normalizeForParse(expression);
 
   if (expression.trim().startsWith("@")) {
-      try {
-        const parseOpts: any = {};
-        if (options.timezone) parseOpts.tz = options.timezone;
-        CronExpressionParser.parse(normalized, parseOpts);
-        return null;
-      } catch (err: any) {
-        return `Invalid cron expression: ${err.message}`;
-      }
+    const macro = expression.trim().toLowerCase();
+    if (macro === '@secondly' && !options.allowSeconds) {
+       return 'Error: @secondly requires --seconds flag.';
+    }
   }
 
   const fields = fieldCount(normalized);

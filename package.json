@@ -38,21 +38,35 @@
     "LICENSE"
   ],
   "dependencies": {
+    "clipboardy": "^5.1.0",
     "commander": "^14.0.2",
     "cron-parser": "^5.5.0",
     "cronstrue": "^3.9.0",
-    "luxon": "^3.7.2"
+    "ink": "^6.6.0",
+    "ink-select-input": "^6.2.0",
+    "ink-text-input": "^6.0.0",
+    "luxon": "^3.7.2",
+    "react": "^19.2.4"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@types/ink-select-input": "^3.0.5",
+    "@types/ink-text-input": "^2.0.5",
     "@types/luxon": "^3.7.1",
     "@types/node": "^25.0.10",
+    "@types/react": "^19.2.10",
     "@typescript-eslint/eslint-plugin": "^8.53.1",
     "@typescript-eslint/parser": "^8.53.1",
+    "chalk": "^5.6.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
+    "ink-testing-library": "^4.0.0",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.17"
+  },
+  "overrides": {
+    "es-toolkit": "1.42.0"
   }
 }
