@@ -48,6 +48,7 @@ export function validateCron(expression: string, options: ValidateOptions = {}):
       return 'Error: Cron expression too long (max 1000 chars).';
   }
 
+  // eslint-disable-next-line no-control-regex
   if (expression.match(/[\x00-\x08\x0E-\x1F\x7F]/)) {
       return 'Error: Invalid control characters in expression.';
   }

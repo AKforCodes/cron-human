@@ -5,16 +5,13 @@ interface OptionsPanelProps {
 	isFocused: boolean;
 	timezone: string;
 	allowSeconds: boolean;
-	onToggleSeconds: () => void;
-	onChangeTimezone: (tz: string) => void;
 }
 
 export const OptionsPanel: React.FC<OptionsPanelProps> = ({
 	isFocused,
 	timezone,
 	allowSeconds,
-	onToggleSeconds,
-	onChangeTimezone
+
 }) => {
 	return (
 		<Box borderStyle="round" borderColor={isFocused ? "green" : "gray"} paddingX={1} flexDirection="column">

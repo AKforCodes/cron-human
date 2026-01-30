@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { render } from 'ink-testing-library';
 import { Box, Text, useInput } from 'ink';
-import { describe, it, expect } from 'vitest';
+import { describe, it, vi, beforeEach } from 'vitest';
 
 const DebugInput = () => {
     const [lastInput, setLastInput] = useState<{input: string, key: any} | null>(null);

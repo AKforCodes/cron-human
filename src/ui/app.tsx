@@ -4,7 +4,6 @@ import { InputSection } from './components/InputSection.js';
 import { PreviewSection } from './components/PreviewSection.js';
 import { OptionsPanel } from './components/OptionsPanel.js';
 import { HistoryPanel } from './components/HistoryPanel.js';
-import { HelpScreen } from './components/HelpScreen.js';
 import clipboardy from 'clipboardy';
 
 enum FocusArea {
@@ -26,7 +25,6 @@ export const App: React.FC = () => {
 	const [focus, setFocus] = useState<FocusArea>(FocusArea.Input);
 	const [history, setHistory] = useState<HistoryItem[]>([]);
 	const [historyIndex, setHistoryIndex] = useState(0);
-	const [showHelp, setShowHelp] = useState(false);
 	const [notification, setNotification] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -60,8 +58,7 @@ export const App: React.FC = () => {
 			setFocus(FocusArea.Input);
 		}
 
-        if (input === '?') {
-        }
+
 
 		if (key.ctrl && input === 'v') {
 			if (focus === FocusArea.Input) {
@@ -140,8 +137,6 @@ export const App: React.FC = () => {
 					isFocused={focus === FocusArea.Options}
 					timezone={timezone || "Local"}
 					allowSeconds={allowSeconds}
-					onToggleSeconds={() => setAllowSeconds(!allowSeconds)}
-					onChangeTimezone={setTimezone}
 				/>
 			</Box>
 

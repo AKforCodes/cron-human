@@ -1,0 +1,29 @@
+
+> cron-human@1.1.0 lint
+> eslint src tests
+
+
+C:\Development\CLI\cron-human\Cron-Human\src\cli.ts
+  71:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\src\lib.ts
+   34:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\src\ui\app.tsx
+   23:19  warning  'setTimezone' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  100:36  warning  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\src\ui\components\PreviewSection.tsx
+  25:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\tests\debug_keys.test.tsx
+  4:24  warning  'vi' is defined but never used            @typescript-eslint/no-unused-vars
+  4:28  warning  'beforeEach' is defined but never used    @typescript-eslint/no-unused-vars
+  7:69  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 12 problems (0 errors, 12 warnings)
+

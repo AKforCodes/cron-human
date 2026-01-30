@@ -1,0 +1,54 @@
+
+> cron-human@1.1.0 lint
+> eslint src tests
+
+
+C:\Development\CLI\cron-human\Cron-Human\src\cli.ts
+  71:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\src\lib.ts
+   34:22  warning  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any
+   51:24  error    Unexpected control character(s) in regular expression: \x00, \x08, \x0e, \x1f  no-control-regex
+   79:22  warning  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any
+   84:17  warning  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any
+  104:18  warning  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any
+  131:17  warning  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\src\ui\app.tsx
+    7:10  warning  'HelpScreen' is defined but never used            @typescript-eslint/no-unused-vars
+   29:9   warning  'showHelp' is assigned a value but never used     @typescript-eslint/no-unused-vars
+   29:19  warning  'setShowHelp' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   34:18  error    'setTimeout' is not defined                       no-undef
+   35:17  error    'clearTimeout' is not defined                     no-undef
+   63:28  error    Empty block statement                             no-empty
+  103:36  warning  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\src\ui\components\OptionsPanel.tsx
+  16:2  warning  'onToggleSeconds' is defined but never used. Allowed unused args must match /^_/u   @typescript-eslint/no-unused-vars
+  17:2  warning  'onChangeTimezone' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Development\CLI\cron-human\Cron-Human\src\ui\components\PreviewSection.tsx
+  25:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Development\CLI\cron-human\Cron-Human\tests\debug_keys.test.tsx
+   4:24  warning  'expect' is defined but never used        @typescript-eslint/no-unused-vars
+   7:69  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:32  error    'setTimeout' is not defined               no-undef
+  37:32  error    'setTimeout' is not defined               no-undef
+  42:32  error    'setTimeout' is not defined               no-undef
+  47:32  error    'setTimeout' is not defined               no-undef
+
+C:\Development\CLI\cron-human\Cron-Human\tests\tui.test.tsx
+   29:36  error  'setTimeout' is not defined  no-undef
+   76:28  error  'setTimeout' is not defined  no-undef
+   89:28  error  'setTimeout' is not defined  no-undef
+   93:28  error  'setTimeout' is not defined  no-undef
+   95:28  error  'setTimeout' is not defined  no-undef
+   99:28  error  'setTimeout' is not defined  no-undef
+  122:28  error  'setTimeout' is not defined  no-undef
+  126:28  error  'setTimeout' is not defined  no-undef
+  128:28  error  'setTimeout' is not defined  no-undef
+  139:28  error  'setTimeout' is not defined  no-undef
+
+Γ£û 33 problems (18 errors, 15 warnings)
+
