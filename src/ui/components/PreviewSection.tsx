@@ -22,8 +22,8 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({ expression, time
 		try {
 			content = explainCron(expression);
 			nextRuns = getNextRuns(expression, 3, timezone);
-		} catch (e: any) {
-			content = e.message;
+		} catch (e: unknown) {
+			content = e instanceof Error ? e.message : String(e);
 			isError = true;
 		}
 	}

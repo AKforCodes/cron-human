@@ -20,7 +20,7 @@ interface HistoryItem {
 export const App: React.FC = () => {
 	const { exit } = useApp();
 	const [expression, setExpression] = useState('');
-	const [timezone, setTimezone] = useState<string | undefined>(undefined);
+	const [timezone] = useState<string | undefined>(undefined);
 	const [allowSeconds, setAllowSeconds] = useState(false);
 	const [focus, setFocus] = useState<FocusArea>(FocusArea.Input);
 	const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -97,8 +97,9 @@ export const App: React.FC = () => {
 				if (history[historyIndex]) {
                     clipboardy.write(history[historyIndex].expression).then(() => {
                         setNotification('Copied to clipboard!');
-                    }).catch((err: any) => {
-                        setNotification(`Copy failed: ${err.message}`);
+                    }).catch((err: unknown) => {
+                        const message = err instanceof Error ? err.message : String(err);
+                        setNotification(`Copy failed: ${message}`);
                     });
 				}
 			}

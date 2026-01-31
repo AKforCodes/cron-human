@@ -68,7 +68,13 @@ program
         process.exit(1);
       }
 
-      const output: any = {
+      interface Output {
+        expression: string;
+        description: string;
+        nextRuns?: string[];
+      }
+
+      const output: Output = {
         expression,
         description,
       };

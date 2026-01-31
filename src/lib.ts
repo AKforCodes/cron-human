@@ -31,11 +31,14 @@ function fieldCount(expr: string): number {
   return expr.trim().split(/\s+/).length;
 }
 
-function toJSDate(x: any): Date {
+function toJSDate(x: unknown): Date {
   if (x instanceof Date) return x;
-  if (x && typeof x.toDate === 'function') return x.toDate();
-  if (x && typeof x.toJSDate === 'function') return x.toJSDate();
-  if (x && typeof x.valueOf === 'function') return new Date(x.valueOf());
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (x && typeof (x as any).toDate === 'function') return (x as any).toDate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (x && typeof (x as any).toJSDate === 'function') return (x as any).toJSDate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (x && typeof (x as any).valueOf === 'function') return new Date((x as any).valueOf());
   const d = new Date(String(x));
   if (isNaN(d.getTime())) {
       throw new Error('cron-parser returned an invalid date iterator result.');
@@ -77,13 +80,14 @@ export function validateCron(expression: string, options: ValidateOptions = {}):
   }
 
   try {
-    const parseOpts: any = {};
+    const parseOpts: { tz?: string } = {};
     if (options.timezone) parseOpts.tz = options.timezone;
 
     CronExpressionParser.parse(normalized, parseOpts);
     return null;
-  } catch (err: any) {
-    return `Invalid cron expression: ${err.message}`;
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return `Invalid cron expression: ${message}`;
   }
 }
 
@@ -102,7 +106,7 @@ export function getNextRuns(
   count: number,
   timezone?: string,
 ): string[] {
-  const options: any = {};
+  const options: { tz?: string } = {};
 
   if (!Number.isFinite(count) || count < 0 || count > 1000) {
       throw new Error("Invalid count: must be between 0 and 1000.");
@@ -129,7 +133,8 @@ export function getNextRuns(
         dates.push(dt.toFormat('yyyy-MM-dd HH:mm:ss'));
     }
     return dates;
-  } catch (err: any) {
-    throw new Error(`Failed to calculate next runs: ${err.message}`);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to calculate next runs: ${message}`);
   }
 }
