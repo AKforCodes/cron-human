@@ -4,6 +4,7 @@ import { InputSection } from './components/InputSection.js';
 import { PreviewSection } from './components/PreviewSection.js';
 import { OptionsPanel } from './components/OptionsPanel.js';
 import { HistoryPanel } from './components/HistoryPanel.js';
+import { PresetsModal } from './components/PresetsModal.js';
 import clipboardy from 'clipboardy';
 
 enum FocusArea {
@@ -11,6 +12,8 @@ enum FocusArea {
 	Options,
 	History
 }
+
+type InputMode = 'cron' | 'timezone';
 
 interface HistoryItem {
 	expression: string;
@@ -20,7 +23,10 @@ interface HistoryItem {
 export const App: React.FC = () => {
 	const { exit } = useApp();
 	const [expression, setExpression] = useState('');
-	const [timezone] = useState<string | undefined>(undefined);
+	const [timezone, setTimezone] = useState<string | undefined>(undefined);
+	const [timezoneInput, setTimezoneInput] = useState('');
+	const [inputMode, setInputMode] = useState<InputMode>('cron');
+	const [showPresets, setShowPresets] = useState(false);
 	const [allowSeconds, setAllowSeconds] = useState(false);
 	const [focus, setFocus] = useState<FocusArea>(FocusArea.Input);
 	const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -40,6 +46,65 @@ export const App: React.FC = () => {
 			return;
 		}
 
+
+
+		if (key.ctrl && input === 'v') {
+			if (focus === FocusArea.Input && !showPresets) {
+                clipboardy.read().then(text => {
+                    if (text) {
+						if (inputMode === 'timezone') {
+							setTimezoneInput(text.trim());
+						} else {
+                        	setExpression(text.trim());
+						}
+                        setNotification('Pasted from clipboard!');
+                    }
+                }).catch(err => {
+                    setNotification(`Paste failed: ${err.message}`);
+                });
+                return;
+			}
+		}
+
+		if (key.ctrl && input === 'r') {
+			if (inputMode === 'timezone') {
+				setTimezoneInput('');
+			} else {
+				setExpression('');
+			}
+			setFocus(FocusArea.Input);
+            return;
+		}
+
+		if (key.ctrl && input === 't') {
+            if (showPresets) return;
+
+			setInputMode('timezone');
+			setTimezoneInput(timezone || '');
+			setFocus(FocusArea.Input);
+			return;
+		}
+
+		if (key.ctrl && input === 'p') {
+            if (inputMode === 'timezone') return;
+
+			setShowPresets(prev => !prev);
+			return;
+		}
+
+
+
+		if (inputMode === 'timezone') {
+			if (key.escape) {
+				setInputMode('cron');
+				setFocus(FocusArea.Input);
+				return;
+			}
+			return;
+		}
+
+
+
 		if (input === 'q' && !key.ctrl && focus !== FocusArea.Input) {
 			exit();
 			return;
@@ -51,33 +116,17 @@ export const App: React.FC = () => {
 				if (prev === FocusArea.Options) return FocusArea.History;
 				return FocusArea.Input;
 			});
-		}
-
-		if (key.ctrl && input === 'r') {
-			setExpression('');
-			setFocus(FocusArea.Input);
+            return;
 		}
 
 
 
-		if (key.ctrl && input === 'v') {
-			if (focus === FocusArea.Input) {
-                clipboardy.read().then(text => {
-                    if (text) {
-                        setExpression(text.trim());
-                        setNotification('Pasted from clipboard!');
-                    }
-                }).catch(err => {
-                    setNotification(`Paste failed: ${err.message}`);
-                });
-			}
-		}
+
 
 		if (focus === FocusArea.Options) {
 			if (input === ' ') {
 				setAllowSeconds(prev => !prev);
 			}
-
 		}
 
 		if (focus === FocusArea.History) {
@@ -107,6 +156,12 @@ export const App: React.FC = () => {
 	});
 
 	const handleInputSubmit = (val: string) => {
+		if (inputMode === 'timezone') {
+			setTimezone(val.trim() || undefined);
+			setInputMode('cron');
+			return;
+		}
+
 		if (val.trim()) {
 			const last = history[0];
 			if (!last || last.expression !== val) {
@@ -127,10 +182,11 @@ export const App: React.FC = () => {
             </Box>
 
 			<InputSection
-				value={expression}
-				onChange={setExpression}
+				value={inputMode === 'timezone' ? timezoneInput : expression}
+				onChange={inputMode === 'timezone' ? setTimezoneInput : setExpression}
 				onSubmit={handleInputSubmit}
-				isFocused={focus === FocusArea.Input}
+				isFocused={focus === FocusArea.Input && !showPresets}
+				label={inputMode === 'timezone' ? "Enter Timezone (e.g. UTC, America/New_York) [Esc to cancel]:" : "Cron Expression:"}
 			/>
 
 			<Box marginY={1}>
@@ -147,14 +203,29 @@ export const App: React.FC = () => {
 				allowSeconds={allowSeconds}
 			/>
 
+
 			<Box marginTop={1}>
 				<HistoryPanel
 					isFocused={focus === FocusArea.History}
-					items={history.slice(0, 5)}
+					items={history.slice(Math.max(0, historyIndex - 2), Math.max(0, historyIndex - 2) + 5)}
 					selectedIndex={historyIndex}
+					startIndex={Math.max(0, historyIndex - 2)}
 				/>
                 {history.length > 5 && <Text dimColor>... {history.length - 5} more</Text>}
 			</Box>
+
+			{showPresets && (
+				<Box position="absolute" minHeight={10} minWidth={50} marginTop={2} marginLeft={5}>
+					<PresetsModal
+						onSelect={(val) => {
+							setExpression(val);
+							setShowPresets(false);
+							setFocus(FocusArea.Input);
+						}}
+						onCancel={() => setShowPresets(false)}
+					/>
+				</Box>
+			)}
 		</Box>
 	);
 };

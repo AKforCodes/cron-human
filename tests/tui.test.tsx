@@ -143,4 +143,29 @@ describe('TUI App', () => {
         expect(mocks.write).toHaveBeenCalledWith('* * * * *');
     });
   });
+  it('opens presets menu with Ctrl+P', async () => {
+    const { lastFrame, stdin } = render(<App />);
+
+    // Simulate Ctrl+P (raw input simulation might vary, ink-testing-library supports string input mostly)
+    // Ctrl+P is \x10
+    stdin.write('\x10');
+
+    await waitFor(() => {
+        const frame = lastFrame();
+        expect(frame).toContain('Select a Preset');
+        expect(frame).toContain('Every Minute');
+    });
+  });
+
+  it('switches to timezone input with Ctrl+T', async () => {
+    const { lastFrame, stdin } = render(<App />);
+
+    // Ctrl+T is \x14
+    stdin.write('\x14');
+
+    await waitFor(() => {
+        const frame = lastFrame();
+        expect(frame).toContain('Enter Timezone');
+    });
+  });
 });

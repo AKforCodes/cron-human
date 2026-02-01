@@ -10,9 +10,10 @@ interface HistoryPanelProps {
 	isFocused: boolean;
 	items: HistoryItem[];
 	selectedIndex: number;
+	startIndex: number;
 }
 
-export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isFocused, items, selectedIndex }) => {
+export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isFocused, items, selectedIndex, startIndex }) => {
 	if (items.length === 0) {
 		return (
 			<Box borderStyle="round" borderColor={isFocused ? "green" : "gray"} paddingX={1} flexDirection="column">
@@ -26,14 +27,18 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isFocused, items, se
 	return (
 		<Box borderStyle="round" borderColor={isFocused ? "green" : "gray"} paddingX={1} flexDirection="column">
 			<Text bold>History (Up/Down to navigate, Enter to load, 'c' to copy):</Text>
-			{items.map((item, index) => (
+			{items.map((item, index) => {
+				const globalIndex = startIndex + index;
+				const isSelected = globalIndex === selectedIndex;
+				return (
 				<Box key={index}>
-					<Text color={index === selectedIndex ? "cyan" : "white"}>
-						{index === selectedIndex ? "> " : "  "}
+					<Text color={isSelected ? "cyan" : "white"}>
+						{isSelected ? "> " : "  "}
 						{item.expression}
 					</Text>
 				</Box>
-			))}
+				);
+			})}
 		</Box>
 	);
 };
