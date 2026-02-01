@@ -70,8 +70,6 @@ describe('TUI Stress Tests', () => {
 
         await waitFor(() => {
             const frame = lastFrame();
-        await waitFor(() => {
-            const frame = lastFrame();
             expect(frame).toContain('Cron Human TUI');
         });
     });
