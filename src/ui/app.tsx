@@ -27,7 +27,7 @@ export const App: React.FC = () => {
 	const [timezoneInput, setTimezoneInput] = useState('');
 	const [inputMode, setInputMode] = useState<InputMode>('cron');
     const inputModeRef = React.useRef(inputMode);
-    inputModeRef.current = inputMode; // Keep ref in sync with state for useInput closures
+    inputModeRef.current = inputMode;
 
 	const [showPresets, setShowPresets] = useState(false);
 	const [allowSeconds, setAllowSeconds] = useState(false);
