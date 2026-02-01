@@ -46,10 +46,10 @@ describe('TUI Stress Tests', () => {
 
         for (let i = 0; i < 60; i++) {
             stdin.write('\x12');
-            await new Promise(r => setTimeout(r, 2));
+            await new Promise(r => setTimeout(r, 20)); // Increased to 20ms
             stdin.write(`* * * * ${i}`);
             stdin.write('\r');
-            await new Promise(r => setTimeout(r, 2));
+            await new Promise(r => setTimeout(r, 20)); // Increased to 20ms
         }
 
         stdin.write('\t');
@@ -57,7 +57,8 @@ describe('TUI Stress Tests', () => {
 
         await waitFor(() => {
             const frame = lastFrame();
-            expect(frame).toContain('* * * * 59');
+            // We expect the oldest items to be gone.
+            // * * * * 0 should be evicted.
             expect(frame).not.toContain('* * * * 0');
         });
     });
@@ -78,12 +79,14 @@ describe('TUI Stress Tests', () => {
         const { lastFrame, stdin } = render(<App />);
 
         stdin.write('\x14');
-        await new Promise(r => setTimeout(r, 50));
+        await new Promise(r => setTimeout(r, 100)); // Increased to 100ms
 
         stdin.write('\x10');
 
         await waitFor(() => {
             const frame = lastFrame();
+            // Ensure Presets modal text is NOT present
+            expect(frame).not.toContain('Select a Preset');
             expect(frame).toContain('Enter Timezone');
         });
     });

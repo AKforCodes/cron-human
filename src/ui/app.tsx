@@ -26,6 +26,9 @@ export const App: React.FC = () => {
 	const [timezone, setTimezone] = useState<string | undefined>(undefined);
 	const [timezoneInput, setTimezoneInput] = useState('');
 	const [inputMode, setInputMode] = useState<InputMode>('cron');
+    const inputModeRef = React.useRef(inputMode);
+    inputModeRef.current = inputMode; // Keep ref in sync with state for useInput closures
+
 	const [showPresets, setShowPresets] = useState(false);
 	const [allowSeconds, setAllowSeconds] = useState(false);
 	const [focus, setFocus] = useState<FocusArea>(FocusArea.Input);
@@ -46,13 +49,11 @@ export const App: React.FC = () => {
 			return;
 		}
 
-
-
 		if (key.ctrl && input === 'v') {
 			if (focus === FocusArea.Input && !showPresets) {
                 clipboardy.read().then(text => {
                     if (text) {
-						if (inputMode === 'timezone') {
+						if (inputModeRef.current === 'timezone') {
 							setTimezoneInput(text.trim());
 						} else {
                         	setExpression(text.trim());
@@ -67,7 +68,7 @@ export const App: React.FC = () => {
 		}
 
 		if (key.ctrl && input === 'r') {
-			if (inputMode === 'timezone') {
+			if (inputModeRef.current === 'timezone') {
 				setTimezoneInput('');
 			} else {
 				setExpression('');
@@ -86,7 +87,7 @@ export const App: React.FC = () => {
 		}
 
 		if (key.ctrl && input === 'p') {
-            if (inputMode === 'timezone') return;
+            if (inputModeRef.current === 'timezone') return;
 
 			setShowPresets(prev => !prev);
 			return;
