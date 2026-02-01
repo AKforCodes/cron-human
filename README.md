@@ -4,6 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/cron-human.svg)](https://www.npmjs.com/package/cron-human)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm downloads](https://img.shields.io/npm/dt/cron-human.svg)](https://www.npmjs.com/package/cron-human)
 
 ## Quick Start
 
