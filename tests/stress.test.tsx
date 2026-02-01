@@ -47,7 +47,8 @@ describe('TUI Stress Tests', () => {
         for (let i = 0; i < 55; i++) {
             stdin.write('\x12');
             await new Promise(r => setTimeout(r, 20));
-            stdin.write(`* * * * ${i}`);
+            // Use Minute field (0-59) to ensure valid cron and unique history items
+            stdin.write(`${i} * * * *`);
             stdin.write('\r');
             await new Promise(r => setTimeout(r, 20));
         }
@@ -57,8 +58,8 @@ describe('TUI Stress Tests', () => {
 
         await waitFor(() => {
             const frame = lastFrame();
-
-            expect(frame).not.toContain('* * * * 0');
+            // Expect the oldest item "0 * * * *" to be evicted.
+            expect(frame).not.toContain('0 * * * *');
         });
     }, 15000);
 
