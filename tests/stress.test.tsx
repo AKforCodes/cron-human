@@ -77,19 +77,18 @@ describe('TUI Stress Tests', () => {
     it('prevents mode nesting (e.g. opening Presets while in Timezone)', async () => {
         const { lastFrame, stdin } = render(<App />);
 
-        stdin.write('\x14'); // Ctrl+T
+        stdin.write('\x14');
 
-        // Robustness: Wait for UI to actually switch to Timezone mode first
         await waitFor(() => {
              const frame = lastFrame();
              expect(frame).toContain('Enter Timezone');
         });
 
-        stdin.write('\x10'); // Ctrl+P
+        stdin.write('\x10');
 
         await waitFor(() => {
             const frame = lastFrame();
-            // Ensure Presets modal text is NOT present
+
             expect(frame).not.toContain('Select a Preset');
             expect(frame).toContain('Enter Timezone');
         });
