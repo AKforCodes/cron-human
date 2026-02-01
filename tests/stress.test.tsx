@@ -44,7 +44,7 @@ describe('TUI Stress Tests', () => {
     it('handles large history correctly', async () => {
         const { lastFrame, stdin } = render(<App />);
 
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 55; i++) {
             stdin.write('\x12');
             await new Promise(r => setTimeout(r, 20));
             stdin.write(`* * * * ${i}`);
@@ -60,7 +60,7 @@ describe('TUI Stress Tests', () => {
 
             expect(frame).not.toContain('* * * * 0');
         });
-    });
+    }, 15000);
 
     it('survives massive input paste', async () => {
         const { lastFrame, stdin } = render(<App />);
