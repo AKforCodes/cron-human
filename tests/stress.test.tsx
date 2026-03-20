@@ -44,10 +44,17 @@ describe('TUI Stress Tests', () => {
     it('handles large history correctly', async () => {
         const { lastFrame, stdin } = render(<App />);
 
-        for (let i = 0; i < 55; i++) {
+        // First entry uses a unique expression that won't be a substring of later ones
+        stdin.write('\x12');
+        await new Promise(r => setTimeout(r, 20));
+        stdin.write('0 0 1 1 *');
+        stdin.write('\r');
+        await new Promise(r => setTimeout(r, 20));
+
+        // Add 54 more entries to exceed the 50-item history cap
+        for (let i = 1; i <= 54; i++) {
             stdin.write('\x12');
             await new Promise(r => setTimeout(r, 20));
-            // Use Minute field (0-59) to ensure valid cron and unique history items
             stdin.write(`${i} * * * *`);
             stdin.write('\r');
             await new Promise(r => setTimeout(r, 20));
@@ -58,8 +65,8 @@ describe('TUI Stress Tests', () => {
 
         await waitFor(() => {
             const frame = lastFrame();
-            // Expect the oldest item "0 * * * *" to be evicted.
-            expect(frame).not.toContain('0 * * * *');
+            // Expect the oldest item "0 0 1 1 *" to be evicted (history caps at 50)
+            expect(frame).not.toContain('0 0 1 1 *');
         });
     }, 15000);
 
