@@ -101,6 +101,173 @@ export function explainCron(expression: string): string {
   });
 }
 
+export interface CompareResult {
+  a: { expression: string; description: string; nextRuns: string[] };
+  b: { expression: string; description: string; nextRuns: string[] };
+}
+
+export function compareCron(
+  exprA: string,
+  exprB: string,
+  count: number = 5,
+  options: { timezone?: string; allowSeconds?: boolean } = {},
+): CompareResult {
+  for (const [label, expr] of [['A', exprA], ['B', exprB]] as const) {
+    const err = validateCron(expr, { timezone: options.timezone, allowSeconds: options.allowSeconds });
+    if (err) throw new Error(`Expression ${label}: ${err}`);
+  }
+
+  return {
+    a: {
+      expression: exprA,
+      description: explainCron(exprA),
+      nextRuns: getNextRuns(exprA, count, options.timezone),
+    },
+    b: {
+      expression: exprB,
+      description: explainCron(exprB),
+      nextRuns: getNextRuns(exprB, count, options.timezone),
+    },
+  };
+}
+
+export interface CronStats {
+  description: string;
+  frequency: {
+    perDay: number;
+    perWeek: number;
+    perMonth: number;
+    perYear: number;
+  };
+  gaps: {
+    shortest: { minutes: number; label: string };
+    longest: { minutes: number; label: string };
+    average: { minutes: number; label: string };
+  };
+  cost?: {
+    monthly: number;
+    yearly: number;
+  };
+}
+
+function formatDuration(totalMinutes: number): string {
+  if (totalMinutes < 1) {
+    const secs = Math.round(totalMinutes * 60);
+    return `${secs}s`;
+  }
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const mins = Math.round(totalMinutes % 60);
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days}d`);
+  if (hours > 0) parts.push(`${hours}h`);
+  if (mins > 0) parts.push(`${mins}m`);
+  return parts.join(' ') || '0m';
+}
+
+export function cronStats(
+  expression: string,
+  options: { timezone?: string; allowSeconds?: boolean; costPerRun?: number } = {},
+): CronStats {
+  const err = validateCron(expression, { timezone: options.timezone, allowSeconds: options.allowSeconds });
+  if (err) throw new Error(err);
+
+  if (options.timezone) {
+    const test = DateTime.now().setZone(options.timezone);
+    if (!test.isValid) throw new Error(`Invalid timezone "${options.timezone}". Use IANA like "Europe/London".`);
+  }
+
+  const description = explainCron(expression);
+
+  // Sample runs and extrapolate for high-frequency schedules
+  const parseOpts: { tz?: string; currentDate?: Date } = {};
+  if (options.timezone) parseOpts.tz = options.timezone;
+
+  const now = new Date();
+  parseOpts.currentDate = now;
+  const interval = CronExpressionParser.parse(normalizeForParse(expression), parseOpts);
+
+  const oneYearMs = 365.25 * 24 * 60 * 60 * 1000;
+  const cutoff = now.getTime() + oneYearMs;
+  const timestamps: number[] = [];
+  const maxSamples = 10_000;
+
+  let reachedCutoff = false;
+  for (let i = 0; i < maxSamples; i++) {
+    const obj = interval.next();
+    const d = toJSDate(obj);
+    if (d.getTime() > cutoff) { reachedCutoff = true; break; }
+    timestamps.push(d.getTime());
+  }
+
+  const totalSampled = timestamps.length;
+  if (totalSampled === 0) {
+    throw new Error('No runs found within the next year for this expression.');
+  }
+
+  // Compute gaps from the sample
+  const gaps: number[] = [];
+  for (let i = 1; i < timestamps.length; i++) {
+    gaps.push((timestamps[i] - timestamps[i - 1]) / 60_000);
+  }
+
+  let shortest = gaps[0] ?? 0;
+  let longest = gaps[0] ?? 0;
+  let gapSum = 0;
+  for (const g of gaps) {
+    if (g < shortest) shortest = g;
+    if (g > longest) longest = g;
+    gapSum += g;
+  }
+  const avgGap = gaps.length > 0 ? gapSum / gaps.length : 0;
+
+  // Calculate frequency: extrapolate from sample if we didn't cover the full year
+  let perYear: number;
+  if (reachedCutoff || totalSampled < maxSamples) {
+    // We covered the full year — use actual count
+    perYear = totalSampled;
+  } else {
+    // We hit maxSamples before the year cutoff — extrapolate from sampled span
+    const sampledSpanMs = timestamps[timestamps.length - 1] - timestamps[0];
+    if (sampledSpanMs > 0) {
+      const runsPerMs = (totalSampled - 1) / sampledSpanMs;
+      perYear = Math.round(runsPerMs * oneYearMs);
+    } else {
+      perYear = totalSampled;
+    }
+  }
+
+  const perDay = perYear / 365.25;
+  const perWeek = perDay * 7;
+  const perMonth = perYear / 12;
+
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+
+  const stats: CronStats = {
+    description,
+    frequency: {
+      perDay: round2(perDay),
+      perWeek: round2(perWeek),
+      perMonth: round2(perMonth),
+      perYear: round2(perYear),
+    },
+    gaps: {
+      shortest: { minutes: round2(shortest), label: formatDuration(shortest) },
+      longest: { minutes: round2(longest), label: formatDuration(longest) },
+      average: { minutes: round2(avgGap), label: formatDuration(avgGap) },
+    },
+  };
+
+  if (options.costPerRun !== undefined) {
+    stats.cost = {
+      monthly: round2(perMonth * options.costPerRun),
+      yearly: round2(perYear * options.costPerRun),
+    };
+  }
+
+  return stats;
+}
+
 export function getNextRuns(
   expression: string,
   count: number,

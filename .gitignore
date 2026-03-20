@@ -8,3 +8,6 @@ manual-smoke.ps1
 
 debug_*.ts
 test_output.txt
+
+.claude/
+CLAUDE.md

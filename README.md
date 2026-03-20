@@ -38,6 +38,8 @@ npm install -g cron-human
 - 🤖 **JSON output** - Use `--json` for scripts/automation
 - 🏷️ **Macros** - `@daily`, `@hourly`, `@weekly`, `@monthly`, `@yearly`
 - ⏱️ **Seconds precision** - 6-field cron with `--seconds`
+- 🔀 **Diff** - Compare two cron expressions side-by-side
+- 📊 **Stats** - Frequency, gap analysis, and cost estimation
 
 ## Options
 
@@ -48,8 +50,17 @@ npm install -g cron-human
 | `--json` | | JSON output format | false |
 | `--quiet` | `-q` | Description only (no run times) | false |
 | `--seconds` | | Enable 6-field cron (with seconds) | false |
+| `--cost <price>` | | Cost per invocation for `stats` (e.g., `0.002`) | |
 | `--help` | `-h` | Show help | |
 | `--version` | `-v` | Show version | |
+
+## Subcommands
+
+| Command | Description |
+|---|---|
+| `diff <exprA> <exprB>` | Compare two cron expressions side-by-side |
+| `stats <expression>` | Show frequency, gap analysis, and cost estimates |
+| `tui` | Launch the interactive TUI |
 
 ## Examples
 
@@ -78,6 +89,72 @@ cron-human "*/15 * * * *" --json --quiet
   "nextRuns": []
 }
 ```
+
+## Diff
+
+Compare two cron expressions side-by-side to see how they differ:
+
+```bash
+cron-human diff "0 9 * * MON-FRI" "0 9 * * *"
+```
+
+**Output:**
+```
+A: At 09:00, Monday through Friday
+   0 9 * * MON-FRI
+
+B: At 09:00
+   0 9 * * *
+
+Next 5 runs:
+A                       B
+─────────────────────── ───────────────────────
+2026-03-20 09:00:00     2026-03-20 09:00:00
+2026-03-23 09:00:00     2026-03-21 09:00:00
+2026-03-24 09:00:00     2026-03-22 09:00:00
+2026-03-25 09:00:00     2026-03-23 09:00:00
+2026-03-26 09:00:00     2026-03-24 09:00:00
+```
+
+Supports `--json`, `--tz`, `--next`, and `--seconds` flags.
+
+## Stats
+
+Get frequency, gap analysis, and optional cost estimates for any cron schedule:
+
+```bash
+cron-human stats "0 9 * * MON-FRI"
+```
+
+**Output:**
+```
+Schedule: At 09:00, Monday through Friday
+
+Frequency:
+  Per day ......... 0.72
+  Per week ........ 5.02
+  Per month ....... 21.83
+  Per year ........ 261.9
+
+Gaps:
+  Shortest ........ 1d  (1440 min)
+  Longest ......... 3d  (4320 min)
+  Average ......... 1d 9h 36m  (2016 min)
+```
+
+**With cost estimation** (e.g., AWS Lambda at $0.002/invocation):
+
+```bash
+cron-human stats "*/5 * * * *" --cost 0.002
+```
+
+```
+Cost estimate ($0.002/invocation):
+  Monthly ......... $17.53
+  Yearly .......... $210.39
+```
+
+Supports `--json`, `--tz`, `--seconds`, and `--cost` flags.
 
 ## Cron Format
 
