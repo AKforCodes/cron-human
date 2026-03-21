@@ -1,0 +1,42 @@
+{
+  "name": "cron-human-mcp",
+  "version": "1.0.0",
+  "description": "MCP server exposing cron-human tools for AI agents",
+  "type": "module",
+  "bin": {
+    "cron-human-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "cron",
+    "human-readable",
+    "ai-tools"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/AKforCodes/cron-human#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AKforCodes/cron-human.git",
+    "directory": "cron-human-mcp"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "cron-human": "^1.2.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/node": "^25.0.10"
+  }
+}
